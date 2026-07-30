@@ -12,6 +12,7 @@ import { Server, Socket } from 'socket.io';
   namespace: '/festive',
   cors: {
     origin: '*',
+    credentials: true,
     methods: ['GET', 'POST', 'DELETE'],
   },
 })
