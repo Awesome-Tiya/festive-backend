@@ -1,0 +1,111 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Suggestion {
+  id       String    @id @default(cuid())
+  suggestion String
+  username String
+  email    String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Article {
+  id       String    @id @default(cuid())
+  text     String
+  title    String
+  username String?
+  album    String?
+  time     DateTime?
+
+  comments Comment[]
+  upVotes  UpVote[]
+  stickers Sticker[]
+
+  @@index([time])
+  @@unique([time, title])
+}
+
+enum CommentFlagReason {
+  SPAM
+  DISRESPECT
+  HATE_SPEECH
+  HARASSMENT
+  MISINFORMATION
+  VULGAR
+  OTHER
+}
+
+model CommentFlag {
+  id        String   @id @default(cuid())
+  commentId String
+  username  String
+  reason    CommentFlagReason
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, username])
+  @@index([commentId]) 
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  articleId String
+  isFlag    Boolean  @default(false)
+  comment   String
+  username  String?
+  time      DateTime @default(now())
+
+  likes Like[]
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+
+model UpVote {
+  id        String @id @default(cuid())
+  articleId String
+  username  String
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, username])
+}
+
+model Sticker {
+  id        String @id @default(cuid())
+  username  String
+  name      String
+  articleId String
+  x         Float
+  y         Float
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+
+model DailyFestival {
+  id        String   @id @default(cuid())
+  date      DateTime @unique
+  fest1Id   String
+  fest1Name String
+  fest1Desc String
+  fest2Id   String
+  fest2Name String
+  fest2Desc String
+  createdAt DateTime @default(now())
+}
+
+model Like {
+  id        String @id @default(cuid())
+  commentId String
+  username  String
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, username])
+}
