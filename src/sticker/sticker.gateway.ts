@@ -9,7 +9,6 @@ import {
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
-  namespace: '/festive',
   cors: {
     origin: process.env.FRONTEND ?? "https://localhost:3000",
     credentials: true,
