@@ -27,7 +27,8 @@ export class JwtAuthGuard implements CanActivate {
 
       res.cookie('token', newToken, {
         httpOnly: true,
-        sameSite: 'lax',
+        secure: true,
+        sameSite: 'none',
         maxAge: 1000 * 60 * 60 * 24 * 360, // 360 days
       });
 
